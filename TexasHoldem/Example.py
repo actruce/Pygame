@@ -6,9 +6,6 @@ from CardCommon import *
 PLAYER_CARD = 'player_card'
 COMMUNITY_CARD = 'community_card'
 
-# ------------------------------------------------------
-# Card Sources -> pygame.Surface
-CARD_SURFACE_LIST = []
 
 class Game:
     """..."""
@@ -59,7 +56,6 @@ class Game:
         self.InitializePlayers()
         self.InitializePot()
         self.InitializeRound()
-        self.Get_All_Card_Surfaces()
         print ('InitializeRound')
 
     def InitializeRound(self):
@@ -67,6 +63,7 @@ class Game:
         # Initialize Round
         self.game_deck.InitializeDeck()
         self.game_deck.ShuffleDeck()
+        #self.game_deck.PrintCurrentDeck()
         self.community_cards = []
 
         self.InitializePot()
@@ -88,42 +85,6 @@ class Game:
 
     def InitializePot(self):
         self.pot = Pot()
-
-    def Get_All_Card_Surfaces(self):
-        for suit in range(4):
-            for rank in range(13):
-                card_str = self.GetCardImageName(Card(suit, rank))
-                CARD_SURFACE_LIST.append(pygame.image.load(card_str))
-
-    def GetCardImageName(self, card):
-            suit = card.GetSuit()
-            rank = card.GetRank()
-
-            suit_str = ''
-            rank_str = ''
-
-            if suit == 0:
-                suit_str = 'spades'
-            elif suit == 1:
-                suit_str = 'diamonds'
-            elif suit == 2:
-                suit_str = 'hearts'
-            elif suit == 3:
-                suit_str = 'clubs'
-
-            if rank == 0:
-                rank_str = 'ace'
-            elif rank > 0 and rank < 10:
-                rank_str = str(rank +1)
-            elif rank == 10:
-                rank_str = 'jack'
-            elif rank == 11:
-                rank_str = 'queen'
-            elif rank == 12:
-                rank_str = 'king'
-
-            tmp_str = 'playing_cards/'+ rank_str + '_'+ suit_str + '.png'
-            return tmp_str
 
     # pre-flop: deal 2 hold_cards to each players
     def deal_preflop(self):
@@ -350,9 +311,7 @@ class CardSprite(pygame.sprite.Sprite):
 
     def __init__(self, card, src_pos,  dest_pos, type, group=None):
         pygame.sprite.Sprite.__init__(self, group)
-        #Instead of loading image directly when CardSprite created, Use Preloaded Surfaces
-        #self.src_image = pygame.image.load(self.GetCardImageName(card))
-        self.src_image = CARD_SURFACE_LIST[card.suit*1 + card.rank]
+        self.src_image = pygame.image.load(self.GetCardImageName(card))
         self.image = self.src_image
         self.pos = [0.0, 0.0]
         self.pos[0] = src_pos[0] * 1.0  # float
@@ -395,6 +354,36 @@ class CardSprite(pygame.sprite.Sprite):
 
     def GetDelY(self, speed, seconds):
         return (-1.0) *(self.src_pos[1] - self.dest_pos[1]) / seconds / speed
+
+    def GetCardImageName(self, card):
+            suit = card.GetSuit()
+            rank = card.GetRank()
+
+            suit_str = ''
+            rank_str = ''
+
+            if suit == 0:
+                suit_str = 'spades'
+            elif suit == 1:
+                suit_str = 'diamonds'
+            elif suit == 2:
+                suit_str = 'hearts'
+            elif suit == 3:
+                suit_str = 'clubs'
+
+            if rank == 0:
+                rank_str = 'ace'
+            elif rank > 0 and rank < 10:
+                rank_str = str(rank +1)
+            elif rank == 10:
+                rank_str = 'jack'
+            elif rank == 11:
+                rank_str = 'queen'
+            elif rank == 12:
+                rank_str = 'king'
+
+            tmp_str = 'playing_cards/'+ rank_str + '_'+ suit_str + '.png'
+            return tmp_str
 
 
     
