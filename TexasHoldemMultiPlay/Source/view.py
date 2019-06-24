@@ -469,7 +469,7 @@ class winner_result(object):
             result_color = (255, 255, 255)
 
             # draw rect
-            pygame.draw.rect(win, (130,124,102), (self.x - 5, self.y - 3 , 330, 140), 0)
+            pygame.draw.rect(win, (130,124,102), (self.x - 5, self.y - 3 , 340, 140), 0)
 
             # draw result text
             font = pygame.font.SysFont('comic sans MS', 20)

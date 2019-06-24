@@ -109,7 +109,7 @@ def redrawWindows():
 
     # draw cards
     for idx in range(Game.MAX_PLAYER_CNT):
-        for card in players_cards[idx]:
+        for card in players_cards_screen[idx]:
             card.draw(win)
 
     # draw community cards
@@ -142,23 +142,22 @@ def redrawWindows():
 
 
 def draw_players_hands(player_cards, pid, rid_list):
-
-    screen_pid = rid_list.index(pid)
-
     for idx in range(Game.MAX_PLAYER_CNT):
+        screen_id = rid_list.index(idx)
 
-        if idx != screen_pid:
+        if idx != pid:
+            
             player_card = player_cards[idx]
 
             card1 = player_card[0]
             card2 = player_card[1]
 
-            player_card1 = players_cards[idx][0]
+            player_card1 = players_cards_screen[screen_id][0]
             pos_card1 = player_card1.get_pos()
             player_card1.set_pos(pos_card1[0] -10, pos_card1[1], pos_card1[2]-10, pos_card1[3])
             player_card1.set_image(CARD_SURFACE_LIST[ (13*card1.suit) + card1.rank])
 
-            player_card2 = players_cards[idx][1]
+            player_card2 = players_cards_screen[screen_id][1]
             pos_card2 = player_card2.get_pos()
             player_card2.set_pos(pos_card2[0] -10, pos_card2[1], pos_card2[2]-10, pos_card2[3])
             player_card2.set_image(CARD_SURFACE_LIST[ (13*card2.suit) + card2.rank])
@@ -318,20 +317,20 @@ def draw_bet_things(prev_turn_pid, curr_turn_pid, rid_list, players_info_dict, I
     redrawWindows()
 
 def init_player_cards():
-    global players_cards    
+    global players_cards_screen    
     global player_pos
     global empty_card
 
-    players_cards = {}
+    players_cards_screen = {}
     
     idx = 0
 
     for pos in player_pos:
         card1 = card(pos[0] - 105, 0, pos[0] - 105, pos[1] - 4, empty_card)
-        players_cards[idx] = []
-        players_cards[idx].append(card1)
+        players_cards_screen[idx] = []
+        players_cards_screen[idx].append(card1)
         card2 = card(pos[0] - 60, 0, pos[0] - 60, pos[1] - 4, empty_card)
-        players_cards[idx].append(card2)
+        players_cards_screen[idx].append(card2)
         idx += 1
 
     
@@ -356,8 +355,8 @@ for pos in player_pos:
 
 current_player_idx = round((Game.MAX_PLAYER_CNT + 0.1 )/2)
 
-# create players_cards
-players_cards = {}
+# create players_cards_screen
+players_cards_screen = {}
 init_player_cards()
 
 # create community cards
@@ -388,7 +387,7 @@ chips = []
 chip_colors = [RED, GREEN, YELLOW, PURPLE, BLUE, DARK_RED, BLACK, LIGHT_BLUE, PINK, GRAY, LIGHT_GRAY, LIGHT_BLACK, CYAN]
 
 # winner result
-winner_result_draw = winner_result(width //2 - 170, height // 2 - 45)
+winner_result_draw = winner_result(width //2 - 170, height // 2 - 53)
 
 # winner_quit_result
 winner_quit_result_draw = winner_quit_result(width //2 - 260, height // 2 - 15)
@@ -439,10 +438,9 @@ def main(input_text):
     player_name = input_text
     print(player_name)
     game_reply = n.send({"connect_player":player_name})
-    
+
     clock = pygame.time.Clock()
     
-
     rid_list = get_rid_list(p)
 
     not_entered_initround_stage = True
@@ -594,14 +592,14 @@ def main(input_text):
                 card2 = list_cards[1]
 
                 for idx in range(Game.MAX_PLAYER_CNT):
-                    players_cards[idx][0].set_visible(True)
-                    players_cards[idx][1].set_visible(True)
+                    players_cards_screen[idx][0].set_visible(True)
+                    players_cards_screen[idx][1].set_visible(True)
 
-                player_card1 = players_cards[current_player_idx][0]
+                player_card1 = players_cards_screen[current_player_idx][0]
                 player_card1.set_image(CARD_SURFACE_LIST[ (13*card1.suit) + card1.rank])
                 player_card1.set_player_card(True)
 
-                player_card2 = players_cards[current_player_idx][1]
+                player_card2 = players_cards_screen[current_player_idx][1]
                 player_card2.set_image(CARD_SURFACE_LIST[ (13*card2.suit) + card2.rank])
                 player_card2.set_player_card(True)
 
@@ -773,6 +771,7 @@ def main(input_text):
                 draw_winner_result(game_reply["winner"])
                 redrawWindows()
                 pygame.time.delay(6000)
+                #pygame.time.delay(10000)
                 
                 # to show the winner and result
                 # send showdown to request next
